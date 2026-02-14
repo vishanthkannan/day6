@@ -1,19 +1,34 @@
-pipeline{
+pipeline {
     agent any
-    stages {
-        stage('source code') {
-            steps {
-                echo 'Cloning...'
-                   git branch: 'main', url: 'https://github.com/PV-Sudarsan/task-jenkins.git'
 
+    environment {
+        AWS_DEFAULT_REGION = "eu-north-1"
+    }
+
+    stages {
+
+        stage('Source Code') {
+            steps {
+                echo 'Cloning repository...'
+                git branch: 'main', url: 'https://github.com/vishanthkannan/day6.git'
             }
         }
-        stage('terraform') {
+
+        stage('Terraform Init') {
             steps {
-                echo 'Deploying...'
                 sh 'terraform init'
-                sh 'terraform plan -var="ami=ami-0abc1234def567890" '
-                sh 'terraform apply -var="ami=ami-0abc1234def567890" -auto-approve'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan -var="ami=ami-073130f74f5ffb161"'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply -var="ami=ami-073130f74f5ffb161" -auto-approve'
             }
         }
     }
